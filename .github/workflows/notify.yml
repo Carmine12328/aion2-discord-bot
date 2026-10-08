@@ -43,6 +43,7 @@ jobs:
         if: ${{ github.event.inputs.test_notification == 'true' }}
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_MENTION: ${{ secrets.DISCORD_MENTION }}
           TIMEZONE: Europe/Rome
           ADVANCE_MINUTES: 10
         run: python src/main.py --test
@@ -51,6 +52,7 @@ jobs:
         if: ${{ github.event.inputs.test_notification != 'true' }}
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_MENTION: ${{ secrets.DISCORD_MENTION }}
           TIMEZONE: Europe/Rome
           ADVANCE_MINUTES: 10
         run: python src/main.py --cron
