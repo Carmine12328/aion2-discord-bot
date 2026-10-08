@@ -4,6 +4,8 @@ on:
   schedule:
     # Esegue ogni 8 minuti, offset per evitare throttling GitHub
     - cron: '2,10,18,26,34,42,50,58 * * * *'
+  repository_dispatch:
+    types: [cron-trigger]
   workflow_dispatch:
     inputs:
       test_notification:
