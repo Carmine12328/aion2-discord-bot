@@ -2,7 +2,9 @@ import json
 import requests
 from datetime import datetime
 
-def build_discord_embed(event_info):
+import os
+
+def build_discord_embed(event_info, attachment_filename=None):
     """
     Costruisce l'embed Discord ricco di dettagli, inclusi orari dinamici,
     miniatura del boss e immagine della mappa.
@@ -53,8 +55,10 @@ def build_discord_embed(event_info):
     if event.get("thumbnail_url"):
         embed["thumbnail"] = {"url": event["thumbnail_url"]}
 
-    # Immagine della mappa (se presente, es. per i World Boss)
-    if event.get("image_url"):
+    # Immagine della mappa (se allegato locale o URL remoto)
+    if attachment_filename:
+        embed["image"] = {"url": f"attachment://{attachment_filename}"}
+    elif event.get("image_url"):
         embed["image"] = {"url": event["image_url"]}
 
     if map_url and "interactivemap.app" in map_url:
@@ -68,13 +72,22 @@ def build_discord_embed(event_info):
 
 def send_discord_notification(webhook_url, event_info, mention=""):
     """
-    Invia la notifica a Discord via Webhook.
+    Invia la notifica a Discord via Webhook con supporto allegati diretti.
     """
     if not webhook_url or "discord.com/api/webhooks" not in webhook_url:
         print(f"[Notifier - Console/DryRun] Notifica per {event_info['event']['name']} (mancano ~{event_info.get('minutes_left')} min)")
         return True
 
-    embed = build_discord_embed(event_info)
+    event_id = event_info["event"].get("id", "")
+    local_map = os.path.join("assets", "maps", f"{event_id}.png")
+    
+    attachment_name = None
+    file_handle = None
+
+    if os.path.exists(local_map):
+        attachment_name = f"{event_id}.png"
+
+    embed = build_discord_embed(event_info, attachment_filename=attachment_name)
     payload = {
         "username": "Aion 2 Alerts",
         "avatar_url": "https://gamers4.life/aion-2/database/aion2-logo.png",
@@ -85,12 +98,25 @@ def send_discord_notification(webhook_url, event_info, mention=""):
         payload["content"] = mention
 
     try:
-        response = requests.post(
-            webhook_url,
-            data=json.dumps(payload),
-            headers={"Content-Type": "application/json"},
-            timeout=10
-        )
+        if attachment_name and os.path.exists(local_map):
+            with open(local_map, "rb") as f:
+                files = {
+                    "files[0]": (attachment_name, f, "image/png")
+                }
+                response = requests.post(
+                    webhook_url,
+                    data={"payload_json": json.dumps(payload)},
+                    files=files,
+                    timeout=15
+                )
+        else:
+            response = requests.post(
+                webhook_url,
+                data=json.dumps(payload),
+                headers={"Content-Type": "application/json"},
+                timeout=10
+            )
+
         if response.status_code in [200, 204]:
             print(f"[Notifier] Notifica inviata con successo su Discord per {event_info['event']['name']}!")
             return True
