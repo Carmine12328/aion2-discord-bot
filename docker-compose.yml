@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  aion2-notifier:
+    build: .
+    container_name: aion2-discord-notifier
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./config:/app/config

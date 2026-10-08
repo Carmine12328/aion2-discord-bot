@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: aion2-discord-notifier
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python src/main.py
+    envVars:
+      - key: DISCORD_WEBHOOK_URL
+        sync: false
+      - key: TIMEZONE
+        value: Europe/Rome
+      - key: ADVANCE_MINUTES
+        value: "10"
+      - key: PORT
+        value: "10000"
