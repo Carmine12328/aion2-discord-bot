@@ -60,7 +60,7 @@
     "days": ["mon", "tue", "wed", "thu", "fri", "sat", "sun"],
     "location": "Chaotic Lower Reshanta",
     "map_url": "https://interactivemap.app/aion2/maps/abyss-reshanta-a?marker_id=34745",
-    "image_url": "https://interactivemap.app/aion2/maps/og-image.jpg",
+    "image_url": "https://raw.githubusercontent.com/Carmine12328/aion2-discord-bot/main/assets/maps/watcher_kaira.png",
     "thumbnail_url": "https://gamers4.life/aion-2/database/world-bosses/BeritraD_01.webp"
   },
   {
@@ -76,7 +76,7 @@
     "days": ["mon", "thu", "sat"],
     "location": "Reshanta Core",
     "map_url": "https://interactivemap.app/aion2/maps/abyss-reshanta-a",
-    "image_url": "https://interactivemap.app/aion2/maps/og-image.jpg",
+    "image_url": "https://raw.githubusercontent.com/Carmine12328/aion2-discord-bot/main/assets/maps/artifact_siege.png",
     "thumbnail_url": null
   },
   {
@@ -92,7 +92,7 @@
     "days": ["mon", "thu", "sat"],
     "location": "Chaotic Lower Reshanta",
     "map_url": "https://interactivemap.app/aion2/maps/abyss-reshanta-a?marker_id=34747",
-    "image_url": "https://interactivemap.app/aion2/maps/og-image.jpg",
+    "image_url": "https://raw.githubusercontent.com/Carmine12328/aion2-discord-bot/main/assets/maps/executor_tamasa.png",
     "thumbnail_url": "https://gamers4.life/aion-2/database/world-bosses/Radvima_01.webp"
   },
   {
@@ -108,7 +108,7 @@
     "days": ["mon", "thu", "sat"],
     "location": "Chaotic Lower Reshanta",
     "map_url": "https://interactivemap.app/aion2/maps/abyss-reshanta-a?marker_id=34744",
-    "image_url": "https://interactivemap.app/aion2/maps/og-image.jpg",
+    "image_url": "https://raw.githubusercontent.com/Carmine12328/aion2-discord-bot/main/assets/maps/executor_argo.png",
     "thumbnail_url": "https://gamers4.life/aion-2/database/world-bosses/EleKing_01_V02.webp"
   },
   {
@@ -124,7 +124,7 @@
     "days": ["mon", "thu", "sat"],
     "location": "Chaotic Lower Reshanta",
     "map_url": "https://interactivemap.app/aion2/maps/abyss-reshanta-a?marker_id=34746",
-    "image_url": "https://interactivemap.app/aion2/maps/og-image.jpg",
+    "image_url": "https://raw.githubusercontent.com/Carmine12328/aion2-discord-bot/main/assets/maps/executor_kaira.png",
     "thumbnail_url": "https://gamers4.life/aion-2/database/world-bosses/BeritraD_01.webp"
   },
   {
@@ -140,7 +140,7 @@
     "days": ["fri", "sun"],
     "location": "Reshanta Core",
     "map_url": "https://interactivemap.app/aion2/maps/abyss-reshanta-a",
-    "image_url": "https://interactivemap.app/aion2/maps/og-image.jpg",
+    "image_url": "https://raw.githubusercontent.com/Carmine12328/aion2-discord-bot/main/assets/maps/guardian_lord_nahma.png",
     "thumbnail_url": "https://gamers4.life/aion-2/database/world-bosses/AbBoss_01.webp"
   },
   {
