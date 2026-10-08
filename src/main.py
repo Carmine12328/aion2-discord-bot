@@ -173,8 +173,8 @@ def run_cron_mode(events, cache_path="cache/notified.json"):
         time_until_sec = (next_dt - now_tz).total_seconds()
         minutes_left = round(time_until_sec / 60)
         
-        # Finestra di preavviso: evento che si verificherà tra 2 e 13 minuti
-        if 2 * 60 <= time_until_sec <= 13 * 60:
+        # Finestra di preavviso: evento tra 2 e 18 minuti (intervallo cron ~8 min)
+        if 2 * 60 <= time_until_sec <= 18 * 60:
             event_key = f"{event['id']}_{next_dt.strftime('%Y%m%d%H%M')}"
             if event_key not in notified:
                 print(f"🔔 Trovato evento in arrivo: {event['name']} alle {next_dt.strftime('%H:%M')} (mancano ~{minutes_left} min)!")

@@ -2,8 +2,8 @@ name: Aion 2 Event Notifier
 
 on:
   schedule:
-    # Esegue ogni 5 minuti 24 ore su 24
-    - cron: '*/5 * * * *'
+    # Esegue ogni 8 minuti, offset per evitare throttling GitHub
+    - cron: '2,10,18,26,34,42,50,58 * * * *'
   workflow_dispatch:
     inputs:
       test_notification:
