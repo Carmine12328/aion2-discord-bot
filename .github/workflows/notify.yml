@@ -1,0 +1,56 @@
+name: Aion 2 Event Notifier
+
+on:
+  schedule:
+    # Esegue ogni 5 minuti 24 ore su 24
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+    inputs:
+      test_notification:
+        description: 'Invia notifica di test immediata su Discord'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  check-and-notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Restore cache notifiche anti-duplicato
+        uses: actions/cache@v4
+        with:
+          path: cache
+          key: aion2-cache-${{ github.run_id }}
+          restore-keys: |
+            aion2-cache-
+
+      - name: Installa dipendenze
+        run: pip install -r requirements.txt
+
+      - name: Invia notifica di test (se richiesta manualmente)
+        if: ${{ github.event.inputs.test_notification == 'true' }}
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          TIMEZONE: Europe/Rome
+          ADVANCE_MINUTES: 10
+        run: python src/main.py --test
+
+      - name: Controlla eventi in arrivo ed invia notifiche
+        if: ${{ github.event.inputs.test_notification != 'true' }}
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          TIMEZONE: Europe/Rome
+          ADVANCE_MINUTES: 10
+        run: python src/main.py --cron

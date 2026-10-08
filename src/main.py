@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import time
 import argparse
 from datetime import datetime, timedelta
@@ -142,10 +143,66 @@ def run_loop(events, dry_run=False):
             print(f"⚠️ Errore nel loop: {e}")
             time.sleep(5)
 
+def run_cron_mode(events, cache_path="cache/notified.json"):
+    """
+    Modalità per GitHub Actions / Cron Job: controlla la finestra [2, 13] minuti,
+    invia le notifiche se dovute e registra lo stato nella cache per prevenire duplicati.
+    """
+    os.makedirs(os.path.dirname(cache_path), exist_ok=True)
+    notified = {}
+    if os.path.exists(cache_path):
+        try:
+            with open(cache_path, "r", encoding="utf-8") as f:
+                notified = json.load(f)
+        except Exception:
+            notified = {}
+
+    now_tz = datetime.now(TZ)
+    current_ts = int(now_tz.timestamp())
+    # Rimuovi eventi passati da oltre 24 ore
+    notified = {k: v for k, v in notified.items() if v > current_ts - 86400}
+
+    print(f"[{now_tz.strftime('%Y-%m-%d %H:%M:%S %Z')}] Controllo eventi per il server EU (modalità cron)...")
+    found_any = False
+
+    for event in events:
+        next_dt = get_next_occurrence(event, now_tz)
+        if not next_dt:
+            continue
+        
+        time_until_sec = (next_dt - now_tz).total_seconds()
+        minutes_left = round(time_until_sec / 60)
+        
+        # Finestra di preavviso: evento che si verificherà tra 2 e 13 minuti
+        if 2 * 60 <= time_until_sec <= 13 * 60:
+            event_key = f"{event['id']}_{next_dt.strftime('%Y%m%d%H%M')}"
+            if event_key not in notified:
+                print(f"🔔 Trovato evento in arrivo: {event['name']} alle {next_dt.strftime('%H:%M')} (mancano ~{minutes_left} min)!")
+                item = {
+                    "event": event,
+                    "spawn_time": next_dt,
+                    "minutes_left": minutes_left
+                }
+                send_discord_notification(DISCORD_WEBHOOK_URL, item, mention=DISCORD_MENTION)
+                notified[event_key] = int(next_dt.timestamp())
+                found_any = True
+            else:
+                print(f"ℹ️ Evento {event['name']} alle {next_dt.strftime('%H:%M')} già notificato.")
+
+    if not found_any:
+        print("✅ Nessun nuovo evento nella finestra dei prossimi 10 minuti.")
+
+    try:
+        with open(cache_path, "w", encoding="utf-8") as f:
+            json.dump(notified, f, indent=2)
+    except Exception as e:
+        print(f"⚠️ Impossibile salvare la cache: {e}")
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Aion 2 Discord Event Notifier")
     parser.add_argument("--test", action="store_true", help="Invia una notifica di test immediata")
     parser.add_argument("--list", action="store_true", help="Elenca i prossimi eventi nelle prossime 24 ore")
+    parser.add_argument("--cron", action="store_true", help="Esegui un singolo controllo (per GitHub Actions)")
     parser.add_argument("--dry-run", action="store_true", help="Esegui in console senza inviare su Discord")
     args = parser.parse_args()
 
@@ -155,5 +212,7 @@ if __name__ == "__main__":
         run_test(events)
     elif args.list:
         list_upcoming(events)
+    elif args.cron:
+        run_cron_mode(events)
     else:
         run_loop(events, dry_run=args.dry_run)
